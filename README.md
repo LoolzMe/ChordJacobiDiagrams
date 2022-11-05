@@ -3,9 +3,13 @@
 
 ## "Chord_Jacobi_code"
 In general, there is Vasiliev team's code that I didn't change. It could be optimized though. I think it could be written via numpy's functions and objects. When the right time comes with relevant need, I'll optimized a little bit.
-I did add some extra files:
+To execute the code you have to install sympy:
+`pip3 install sympy`
+
 ### vis.py
 It's sort of visualization.
+Need to install opencv:
+`pip3 install opencv-python`
 
 ### main.py
 It's sort of test functions.
