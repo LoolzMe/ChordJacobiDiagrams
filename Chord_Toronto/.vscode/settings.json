@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "Surf.C": "cpp",
+        "iosfwd": "cpp"
+    }
+}

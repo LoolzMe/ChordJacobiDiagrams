@@ -1,0 +1,16 @@
+
+Prgrams used in "Non-Associative Tangles".
+
+This directory contains the following files:
+
+NAT.m	The mathematica package used in the paper "Non-Associative Tangles".
+
+CDReduceData.m,LinAlg.m 
+	Two files automatically loaded by NAT.m.
+
+Data.m	A file containing some data pre-computed using NAT.m. It is
+	useful to load Data.m before making any computations just to
+	save some computer time.
+
+comp.m	A file containing all the definitions entered interactively in
+	the paper.
