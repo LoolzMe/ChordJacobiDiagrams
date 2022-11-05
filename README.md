@@ -11,5 +11,5 @@ It's sort of visualization.
 It's sort of test functions.
 
 ## "NAT_Toronto" and "Chord_Toronto"
-It's a piece of work that I found at [there]() and [there]().
+It's a piece of work that I found at [there](http://www.math.toronto.edu/~drorbn/papers/nat/natmath.html) and [there](http://www.math.toronto.edu/~drorbn/papers/OnVassiliev).
 There are mathematica modules that I don't know how to execute :) 
