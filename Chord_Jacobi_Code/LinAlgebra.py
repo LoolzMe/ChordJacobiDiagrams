@@ -9,7 +9,7 @@ import itertools
 import time
 import math
 
-from sympy import Matrix
+from sympy import Matrix, zeros
 from sympy import sympify
 from math import factorial as fact
 
@@ -178,6 +178,30 @@ def are_mult(v,w):
     return vv==ww
     
     
+
+    """ Code that was successfully stolen from surface_dynamics
+        Self-stealing isn't a thing, r8?
+    """
+
+class LinearSpace(object):
+    def __init__(self, bases=[]) -> None:
+        self._space = bases
+        self._bases = bases
+        self._matrix = zeros(1, len(bases))
+
+    def bases(self):
+        return self._bases
+
+    def span(self, objects) -> None:
+        self._space = objects
+        self._bases = objects
+
+class LinearObject(object):
+    def __init__(self, space) -> None:
+        self._bases = space.bases()
+        self._scalars = [0] * len(self._bases)
+
+
 
 
 """

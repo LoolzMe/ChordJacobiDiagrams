@@ -11,7 +11,9 @@ flatten((11,5,(0,1,[2,3]),-1,3)) returns
 [11, 5, 0, 1, 2, 3, -1, 3]
 """
 
-from sympy import Matrix
+from sympy import Matrix, zeros
+from sympy import shape
+
 """
 This command converts a nested list into a matrix 
 (i.e. an instance of the class sympy.matrices.dense.MutableDenseMatrix) 
@@ -35,6 +37,8 @@ from LinAlgebra import simplify
 from LinAlgebra import mult
 from LinAlgebra import toVect
 from LinAlgebra import toLC
+
+from LinAlgebra import LinearSpace
 
 import time
 
@@ -105,6 +109,8 @@ def load_now(FILE):
     return load(FO)
 
 from math import factorial as fact
+
+from math import log
 """
 of course, there are many more useful commands in the library "math"
 """
@@ -112,6 +118,44 @@ of course, there are many more useful commands in the library "math"
 """
 AUXILIARY FUNCTIONS
 """
+
+CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-.'
+CHARS_INV = {j:i for i,j in enumerate(CHARS)}
+
+def uint_base64_str(n, l=None):
+    r"""
+    EXAMPLES::
+
+        sage: from surface_dynamics.misc.permutation import uint_base64_str
+
+        sage: uint_base64_str(15)
+        'f'
+        sage: uint_base64_str(15, 3)
+        '00f'
+
+        sage: uint_base64_str(-1)
+        '.'
+        sage: uint_base64_str(-1, 3)
+        '...'
+    """
+    n = int(n)
+    if n == -1:
+        if l is None:
+            return CHARS[64]
+        else:
+            return CHARS[64] * l
+    elif n < -1:
+        raise ValueError("invalid negative integer")
+    s = ''
+    while n:
+        s = CHARS[n % 64] + s
+        n //= 64
+    if l is not None:
+        if len(s) > l:
+            raise ValueError
+        else:
+            s = CHARS[0] * (l - len(s)) + s
+    return s
 
 """
 To test that a list L is sorted, one can use 
@@ -242,7 +286,89 @@ class Ch_diag:
                 c=cc
         return c
 
-#
+    def to_string(self):
+        n = len(self.seq)
+        l = int(log(n, 64)) + 1 # number of digits used for each entry
+        return ''.join(uint_base64_str(self.seq[i], l) for i in range(n))
+
+
+class ChordsLinearSpace(LinearSpace):
+    def __init__(self, bases) -> None:
+        super().__init__(bases)
+        self._corr_dict = {}
+
+        for i, chord in enumerate(bases):
+            self._corr_dict[chord.to_string()] = i
+
+    def reduceByRelation(self, relation_list):
+        for relation in relation_list:
+            coefs = []
+            indexes = []
+            for coef, chord in relation:
+                coefs.append(coef)
+                indexes.append(self.search(Ch_diag(chord)))
+            
+            self.addEquation(coefs, indexes)
+        
+        self.changeBasesFromMatrix()
+
+    
+    def changeBasesFromMatrix(self):
+        i = 0
+        j = 0
+        e_i = shape(self._matrix)[1]
+        e_j = shape(self._matrix)[0]
+        echelon_matrix = self._matrix.rref()[0]
+        new_bases = []
+
+        while i != e_i and j != e_j:
+
+            m = echelon_matrix.row(j)[i]
+            if m == 1:
+                j += 1
+                i += 1
+            else:
+                new_bases.append(self._space[i])
+                i += 1
+
+        self._bases = new_bases
+
+    def search(self, chord):
+        return self._corr_dict[chord.to_string()]
+
+
+    def addEquation(self, values, indexes, n=None):
+        if n == None:
+            n = len(values)
+
+        row = [0] * len(self._space)
+        for value, index in zip(values, indexes):
+            row[index] += value
+        
+        self.addRow(row)
+
+    def addRow(self, row):
+        self._matrix = self._matrix.row_insert(0, Matrix(row).T)
+
+    def getCorrDict(self):
+        return self._corr_dict        
+
+    def clearMatrix(self):
+        self._matrix = Matrix([0]*len(self._space))
+
+    def getBasis(self):
+        return self._bases
+
+    def getMatrix(self):
+        return self._matrix
+    
+    def getSpace(self):
+        return self._space
+
+
+
+
+# tested
 def can_form_lc(v):
     """
     v is a linear combination of chord diagrams;
@@ -377,7 +503,6 @@ def generatePartitions(m):
 """
 VD: NOOOOOOOO! the row is too long!!!
 The number of circular chord diagrams is smaller!
-
 """
 
 #tested

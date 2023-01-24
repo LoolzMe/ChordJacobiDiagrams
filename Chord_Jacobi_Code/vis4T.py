@@ -12,7 +12,8 @@ height = 480
 
 window = np.zeros((height, width, 3)) + 255
 
-fourT = chords.gen_4T(4)
+fourT = chords.gen_4T(3)
+
 
 R = 30
 space = 20
